@@ -28,6 +28,3 @@ cdl()
 	    echo The directory $target is empty '(or non-existent)'
 	fi
 }
-
-alias srced='source functions.sh'
-alias upup='clear;cd ..; ll; srced;'
