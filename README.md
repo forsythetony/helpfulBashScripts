@@ -1,4 +1,4 @@
-# helpfulBashScripts
+# Helpful Bash Scripts
 
 ### Functions
 
