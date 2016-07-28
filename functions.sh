@@ -78,7 +78,14 @@ function up()
 	ll;
 }
 
-
+fucntion gitp()
+{
+	if git pull; then
+		:
+	else
+		echo "Git was not properly installed"
+	fi
+}
 function gits()
 {
 	if git status; then
