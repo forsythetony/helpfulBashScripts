@@ -1,6 +1,17 @@
 #/bin/bash
 
+function bashreload() {
+	if [ -f ~/.bash_profile ]; then 
+		source ~/.bash_profile
+	else
+		if [ -f ~/.bashrc ]; then
+			source ~/.bashrc
+		fi
+	fi	
+}
+
 function cs {
+	
 	cd "$@" && ll;
 }
 
