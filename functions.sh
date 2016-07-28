@@ -78,6 +78,7 @@ function up()
 	ll;
 }
 
+
 function gits()
 {
 	if git status; then
@@ -87,16 +88,40 @@ function gits()
 	fi
 }
 
-oi()
+function oip()
 {
 	if [ $# -lt 1 ]; then
 		return
 	fi
 	
-	if hash git 2>/dev/null; then
-		echo "Git is installed"
+	git_string=""
+	i=0
+	
+	for var in "$@"
+	do
+		if [ $i -eq 0 ]; then
+			git_string="$var"
+		else
+			git_string="$git_string $var"
+		fi
+		i=$((i+1))
+	done
+	
+	git_string="\"$git_string\""
+	
+	if git commit -am "$git_string"; then
+		:
 	else
-		echo "Git is not installed"
+		echo "Git is not installed properly"
+		return
+	fi
+	
+	git push	
+}
+
+oi()
+{
+	if [ $# -lt 1 ]; then
 		return
 	fi
 	
