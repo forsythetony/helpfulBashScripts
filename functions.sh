@@ -65,17 +65,25 @@ up()
 
 oi()
 {
-	if [ $# -ne 1 ]; then
+	if [ $# -lt 1 ]; then
 		exit
 	fi
 	
-	if [[ "$1" =~ ^".*"$ ]]; then
-		git commit -am "$1"
-	else
-		exit
-	fi
+	git_string=""
+	i=0
 	
+	for var in "$@"
+	do
+		if [ $i -eq 0 ]; then
+			git_string="$var"
+		else
+			git_string="$git_string $var"
+		fi
+		i=$((i+1))
+	done
 	
-
-
+	git_string="\"$git_string\""
+	
+	git commit -am $git_string
+	
 }
