@@ -1,5 +1,6 @@
 #/bin/bash
 
+
 function bashreload() {
 	if [ -f ~/.bash_profile ]; then 
 		source ~/.bash_profile
@@ -84,6 +85,10 @@ oi()
 		return
 	fi
 	
+	if hash git 2>/dev/null; then
+		echo "Git is not installed"
+	fi
+	
 	git_string=""
 	i=0
 	
@@ -99,6 +104,8 @@ oi()
 	
 	git_string="\"$git_string\""
 	
-	git commit -am $git_string
+	echo $git_string
+	
+	git commit -am "$git_string"
 	
 }
