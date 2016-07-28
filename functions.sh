@@ -11,7 +11,7 @@ function bashreload() {
 	fi	
 }
 
-function csd() {
+function cs() {
 	
 	cd "$@" && ll;
 }
