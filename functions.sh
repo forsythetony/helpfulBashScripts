@@ -118,7 +118,8 @@ function oip()
 	
 	git push	
 }
-# no
+
+
 oi()
 {
 	if [ $# -lt 1 ]; then
