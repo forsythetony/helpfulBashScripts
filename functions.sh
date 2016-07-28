@@ -86,7 +86,10 @@ oi()
 	fi
 	
 	if hash git 2>/dev/null; then
+		
+	else
 		echo "Git is not installed"
+		return
 	fi
 	
 	git_string=""
@@ -103,8 +106,6 @@ oi()
 	done
 	
 	git_string="\"$git_string\""
-	
-	echo $git_string
 	
 	git commit -am "$git_string"
 	
