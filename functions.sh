@@ -1,12 +1,16 @@
 #/bin/bash
 
-cdl()
+function cs {
+	cd "$@" && ll;
+}
+
+function cdl()
 {
 	if [ "$#" -ne 1 ]; then
 		
 		echo "Illegal number of parameters"
 		
-		exit
+		return
 		
 	fi
 	
@@ -14,7 +18,7 @@ cdl()
 	
 		echo "Illegal character in folder name"
 		
-		exit
+		return
 		
 	fi
 		
@@ -29,24 +33,24 @@ cdl()
 	fi
 }
 
-mcd()
+function mcd()
 {
 	if [ $# -ne 1 ]; then
-		exit
+		return
 	fi
 	
 	if [[ ! "$1" =~ [^0-9a-z-] ]] ; then  
 	    echo "Valid String"; 
 	else 
 		echo "String not valid";
-		exit
+		return
 	fi
 	
 	mkdir -p "$1"
 	
 	if [ $? -ne 0 ] ; then
 	    echo "Directory not created.";
-	    exit
+	    return
 	else
 	
 		echo "Directory created";
@@ -56,7 +60,7 @@ mcd()
 	fi
 }
 
-up()
+function up()
 {
 	cd ..
 	ll;
@@ -66,7 +70,7 @@ up()
 oi()
 {
 	if [ $# -lt 1 ]; then
-		exit
+		return
 	fi
 	
 	git_string=""
