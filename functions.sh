@@ -58,17 +58,13 @@ function mcd()
 		return
 	fi
 	
-	mkdir -p "$1"
-	
-	if [ $? -ne 0 ] ; then
-	    echo "Directory not created.";
-	    return
+	if mkdir -p "$1"; then
+		echo "Directory created"
+		cd "$1"
+		pwd
+		ll
 	else
-	
-		echo "Directory created";
-		cd "$1";
-		pwd;
-		ll;
+		echo "Could not create directory"
 	fi
 }
 
