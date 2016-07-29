@@ -81,11 +81,36 @@ function up()
 
 function gitp()
 {
-	if git pull; then
-		:
+	if [ "$#" -eq 1 ]; then
+		if [ ! -f ~/git_repositories.json ]; then
+			echo "The repos file doesn't exist"
+			return
+		fi
+
+		if ! hash jq 2>/dev/null; then
+			echo "JQ does not exist "
+			return
+		fi
+
+		repoPathIndex="0"
+		jqFinderString=""
+
+		gitPath=( $( cat ~/git_repositories.json | jq ".[$1].path | @sh" | tr -d '"' | tr -d "'") )
+
+		echo $gitPath
+
+		cd $gitPath && git pull && cd -
+		
+
 	else
-		echo "Git was not properly installed"
+		if git pull; then
+			:
+		else
+			echo "Git was not properly installed"
+		fi
 	fi
+
+	
 }
 
 
