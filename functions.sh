@@ -16,6 +16,11 @@ function cs() {
 	cd "$@" && ll;
 }
 
+function clearl()
+{
+	clear && ll
+}
+
 function cdl()
 {
 	if [ "$#" -ne 1 ]; then
