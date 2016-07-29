@@ -66,6 +66,8 @@ function mcd()
 	else
 		echo "Could not create directory"
 	fi
+	
+	# hi
 }
 
 function up()
