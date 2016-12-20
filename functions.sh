@@ -13,7 +13,7 @@ function bashreload() {
 
 function cs() {
 	
-	cd "$@" && ll;
+	cd "$@" && ll
 }
 
 function clearl()
