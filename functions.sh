@@ -11,6 +11,16 @@ function bashreload() {
 	fi	
 }
 
+function gitn() {
+	
+	#	First check to make sure the user provided exactly one argument
+	if [ "$#" -ne 1 ]; then
+		echo "\nIllegal number of parameters\n"
+		return 1
+	fi
+	
+	git checkout -b "$@"
+}
 function cs() {
 	
 	cd "$@" && ll;
@@ -76,10 +86,26 @@ function up()
 
 function gitp()
 {
-	if git pull; then
+	if [ "$#" -eq 0 ]; then
 		:
 	else
-		echo "Git was not properly installed"
+		if [ -f ~/git_directories.json ]; then
+			
+			if hash jq 2>/dev/null; then
+				$path="~"
+				$jqExp=""
+				
+				echo $1
+				
+			else
+				echo "JQ is not installed"
+				return
+			fi
+			
+		else
+			echo "You don't have the git directories json file..."
+			return
+		fi
 	fi
 }
 
@@ -152,4 +178,30 @@ oi()
 		echo "Git is not installed properly"
 	fi
 	
+}
+
+aliasHere()
+{
+	if [ $# -lt 1 ]; then
+		echo "You didn't enter the correct number of arguments"
+		return
+	fi
+	
+	
+	#	First get the current path
+	currPath=$(pwd)
+	currDate=$(date)
+	
+	filePath="$HOME/.custom_bash_aliases"
+	
+	if [ -f $filePath ]; then
+		echo "#		" >> $filePath
+		echo "#		New alias named $1 added on $currDate" >> $filePath
+		echo "#		" >> $filePath
+		echo "alias $1='cs ${currPath// /\ }'" >> $filePath
+		echo " " >> $filePath
+		echo " " >> $filePath
+	else
+		echo "No file"
+	fi
 }
