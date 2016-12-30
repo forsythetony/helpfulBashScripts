@@ -23,7 +23,12 @@ function gitn() {
 }
 function cs() {
 	
-	cd "$@" && ll;
+	cd "$@" && ll
+}
+
+function clearl()
+{
+	clear && ll
 }
 
 function cdl()
@@ -86,27 +91,36 @@ function up()
 
 function gitp()
 {
-	if [ "$#" -eq 0 ]; then
-		:
-	else
-		if [ -f ~/git_directories.json ]; then
-			
-			if hash jq 2>/dev/null; then
-				$path="~"
-				$jqExp=""
-				
-				echo $1
-				
-			else
-				echo "JQ is not installed"
-				return
-			fi
-			
-		else
-			echo "You don't have the git directories json file..."
+	if [ "$#" -eq 1 ]; then
+		if [ ! -f ~/git_repositories.json ]; then
+			echo "The repos file doesn't exist"
 			return
 		fi
+
+		if ! hash jq 2>/dev/null; then
+			echo "JQ does not exist "
+			return
+		fi
+
+		repoPathIndex="0"
+		jqFinderString=""
+
+		gitPath=( $( cat ~/git_repositories.json | jq ".[$1].path | @sh" | tr -d '"' | tr -d "'") )
+
+		echo $gitPath
+
+		cd $gitPath && git pull && cd -
+		
+
+	else
+		if git pull; then
+			:
+		else
+			echo "Git was not properly installed"
+		fi
 	fi
+
+	
 }
 
 
@@ -179,6 +193,7 @@ oi()
 	fi
 	
 }
+<<<<<<< HEAD
 
 aliasHere()
 {
@@ -205,3 +220,5 @@ aliasHere()
 		echo "No file"
 	fi
 }
+=======
+>>>>>>> 71f783cc6174f1235e526a19a0f8d66112f3ebcf
