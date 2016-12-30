@@ -193,8 +193,6 @@ oi()
 	fi
 	
 }
-<<<<<<< HEAD
-
 aliasHere()
 {
 	if [ $# -lt 1 ]; then
@@ -220,5 +218,3 @@ aliasHere()
 		echo "No file"
 	fi
 }
-=======
->>>>>>> 71f783cc6174f1235e526a19a0f8d66112f3ebcf
