@@ -23,7 +23,8 @@ function gitn() {
 }
 function cs() {
 	
-	cd "$@" && ll
+	cd "$@"
+	ls -al
 }
 
 function clearl()
