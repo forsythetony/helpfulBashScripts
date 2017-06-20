@@ -21,19 +21,18 @@ function gitn() {
 	
 	git checkout -b "$@"
 }
+
 function cs() {
 	
 	cd "$@"
 	ls -al
 }
 
-function clearl()
-{
+function clearl() {
 	clear && ll
 }
 
-function cdl()
-{
+function cdl() {
 	if [ "$#" -ne 1 ]; then
 		
 		echo "Illegal number of parameters"
@@ -61,8 +60,7 @@ function cdl()
 	fi
 }
 
-function mcd()
-{
+function mcd() {
 	if [ $# -ne 1 ]; then
 		return
 	fi
@@ -84,14 +82,12 @@ function mcd()
 	fi
 }
 
-function up()
-{
+function up() {
 	cd ..
 	ll;
 }
 
-function gitp()
-{
+function gitp() {
 	if [ "$#" -eq 1 ]; then
 		if [ ! -f ~/git_repositories.json ]; then
 			echo "The repos file doesn't exist"
@@ -124,9 +120,7 @@ function gitp()
 	
 }
 
-
-function gits()
-{
+function gits() {
 	if git status; then
 		:
 	else
@@ -134,8 +128,7 @@ function gits()
 	fi
 }
 
-function oip()
-{
+function oip() {
 	if [ $# -lt 1 ]; then
 		return
 	fi
@@ -166,8 +159,7 @@ function oip()
 }
 
 
-oi()
-{
+function oi() {
 	if [ $# -lt 1 ]; then
 		return
 	fi
@@ -194,8 +186,7 @@ oi()
 	fi
 	
 }
-aliasHere()
-{
+function aliasHere() {
 	if [ $# -lt 1 ]; then
 		echo "You didn't enter the correct number of arguments"
 		return
