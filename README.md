@@ -1,6 +1,6 @@
 # Helpful Bash Scripts
 
-### Functions
+## General Functions
 
 #### bashreload()
   This will search your home directory for a **.bash_profile** or **.bashrc** file and then will source it.
