@@ -210,3 +210,11 @@ function aliasHere() {
 		echo "No file"
 	fi
 }
+
+function parse_git_branch() {
+  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
+
+function git_update(){
+  git checkout master && git pull && git checkout - && git rebase master
+}
