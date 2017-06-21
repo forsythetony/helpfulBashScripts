@@ -1,5 +1,7 @@
 # Add Custom aliases here
 
+# export PS1="\n\[\033[38;5;247m\]\w\[\033[34m\]\$(parse_git_branch)\n🍉  \[\033[0m\]"
+
 # list all, including dot files
 alias ll='ls -alG'
 
