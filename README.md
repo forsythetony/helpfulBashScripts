@@ -38,5 +38,9 @@
   Will do the same as `git -am "<user message>"; git push`. The arguments following `oip` will be used to create the message string. 
   *Note: Careful with these. Know what your doing before you get in the habit of doing a commit all.*
   
+#### git_update()
+  Rebase the latest master branch into the feature branch you are currently working on. Git rebase will apply your local feature branch commits on top of the rebased branch (master). **Beware**: This will rewrite history, so only perform a rebase on a feature branch that has not been shared with others.
 
-
+#### parse_git_branch()
+  Return a string representation of the current branch you are on formated like `(branch-name)`
+  
