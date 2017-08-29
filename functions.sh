@@ -273,7 +273,6 @@ function aliasHere() {
 	fi
 }
 
-<<<<<<< HEAD
 openProjectFile()
 {
 	FILES=./*
@@ -293,12 +292,12 @@ openProjectFile()
 			return
 		fi
 	done
-=======
+}
+
 function parse_git_branch() {
   git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 }
 
 function git_update(){
   git checkout master && git pull && git checkout - && git rebase master
->>>>>>> e687ac170492c0047414f4efb8343176cef835ca
 }
