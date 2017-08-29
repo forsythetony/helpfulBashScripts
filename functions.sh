@@ -86,16 +86,15 @@ function openXcodeProject() {
 
 function cs() {
 
-	cd "$@" && ll
+	cd "$@"
+	ls -al
 }
 
-function clearl()
-{
+function clearl() {
 	clear && ll
 }
 
-function cdl()
-{
+function cdl() {
 	if [ "$#" -ne 1 ]; then
 
 		echo "Illegal number of parameters"
@@ -123,8 +122,7 @@ function cdl()
 	fi
 }
 
-function mcd()
-{
+function mcd() {
 	if [ $# -ne 1 ]; then
 		return
 	fi
@@ -146,14 +144,12 @@ function mcd()
 	fi
 }
 
-function up()
-{
+function up() {
 	cd ..
 	ll;
 }
 
-function gitp()
-{
+function gitp() {
 	if [ "$#" -eq 1 ]; then
 		if [ ! -f ~/git_repositories.json ]; then
 			echo "The repos file doesn't exist"
@@ -186,9 +182,7 @@ function gitp()
 
 }
 
-
-function gits()
-{
+function gits() {
 	if git status; then
 		:
 	else
@@ -196,8 +190,7 @@ function gits()
 	fi
 }
 
-function oip()
-{
+function oip() {
 	if [ $# -lt 1 ]; then
 		return
 	fi
@@ -228,8 +221,7 @@ function oip()
 }
 
 
-oi()
-{
+function oi() {
 	if [ $# -lt 1 ]; then
 		return
 	fi
@@ -256,8 +248,7 @@ oi()
 	fi
 
 }
-aliasHere()
-{
+function aliasHere() {
 	if [ $# -lt 1 ]; then
 		echo "You didn't enter the correct number of arguments"
 		return
@@ -282,6 +273,7 @@ aliasHere()
 	fi
 }
 
+<<<<<<< HEAD
 openProjectFile()
 {
 	FILES=./*
@@ -301,4 +293,12 @@ openProjectFile()
 			return
 		fi
 	done
+=======
+function parse_git_branch() {
+  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
+
+function git_update(){
+  git checkout master && git pull && git checkout - && git rebase master
+>>>>>>> e687ac170492c0047414f4efb8343176cef835ca
 }
