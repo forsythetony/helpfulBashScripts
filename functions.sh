@@ -2,27 +2,90 @@
 
 
 function bashreload() {
-	if [ -f ~/.bash_profile ]; then 
+	if [ -f ~/.bash_profile ]; then
 		source ~/.bash_profile
 	else
 		if [ -f ~/.bashrc ]; then
 			source ~/.bashrc
 		fi
-	fi	
+	fi
 }
 
 function gitn() {
-	
+
 	#	First check to make sure the user provided exactly one argument
 	if [ "$#" -ne 1 ]; then
 		echo "\nIllegal number of parameters\n"
 		return 1
 	fi
-	
+
 	git checkout -b "$@"
 }
+
+function gitIgnoreEdit() {
+
+	if [ -f ./.gitignore ];then
+		atom ./.gitignore
+	fi
+
+}
+
+function gitIgnore() {
+
+	if [ ! -f ./.gitignore ];then
+
+		echo "\nThe .gitignore file does not exist"
+
+		if [ -d "./.git" ];then
+			echo "\nNo .gitignore. Creating now..."
+			touch .gitignore
+		else
+			echo "\nThis isn't even a repo..."
+			return 2
+		fi
+
+	fi
+
+	if [ "$#" -eq 0 ];then
+		echo "\nYou didn't give me a file to ignore..."
+		return 1
+	fi
+
+	for var in "$@";do
+		if [ -f "$@" ];then
+			echo "Saving $@ to .gitignore"
+			echo "$@" >> .gitignore
+		else
+			echo "That wasn't a file"
+		fi
+
+	done
+
+}
+
+function openXcodeProject() {
+
+	workspaceCount=`ls -1 *.xcworkspace 2>/dev/null | wc -l`
+
+	if [ $workspaceCount != 0 ];then
+		open *.xcworkspace
+		return 0
+	fi
+
+	projectCount=`ls -1 *.xcodeproj 2>/dev/null | wc -l`
+
+	if [ $projectCount != 0 ];then
+		open *.xcodeproj
+		return 0
+	fi
+
+	echo "There isn't an xcode workspace or project file in this directory..."
+	return 1
+
+}
+
 function cs() {
-	
+
 	cd "$@" && ll
 }
 
@@ -34,25 +97,25 @@ function clearl()
 function cdl()
 {
 	if [ "$#" -ne 1 ]; then
-		
+
 		echo "Illegal number of parameters"
-		
+
 		return
-		
+
 	fi
-	
+
 	if [[ "$1" == *"."* ]]; then
-	
+
 		echo "Illegal character in folder name"
-		
+
 		return
-		
+
 	fi
-		
+
 	cd "$1"
-	
+
 	target="./"
-	
+
 	if test "$(ls -A "$target")"; then
 	    ll
 	else
@@ -65,14 +128,14 @@ function mcd()
 	if [ $# -ne 1 ]; then
 		return
 	fi
-	
-	if [[ ! "$1" =~ [^0-9a-z-] ]] ; then  
-	    echo "Valid String"; 
-	else 
+
+	if [[ ! "$1" =~ [^0-9a-z-] ]] ; then
+	    echo "Valid String";
+	else
 		echo "String not valid";
 		return
 	fi
-	
+
 	if mkdir -p "$1"; then
 		echo "Directory created"
 		cd "$1"
@@ -110,7 +173,7 @@ function gitp()
 		echo $gitPath
 
 		cd $gitPath && git pull && cd -
-		
+
 
 	else
 		if git pull; then
@@ -120,7 +183,7 @@ function gitp()
 		fi
 	fi
 
-	
+
 }
 
 
@@ -138,10 +201,10 @@ function oip()
 	if [ $# -lt 1 ]; then
 		return
 	fi
-	
+
 	git_string=""
 	i=0
-	
+
 	for var in "$@"
 	do
 		if [ $i -eq 0 ]; then
@@ -151,17 +214,17 @@ function oip()
 		fi
 		i=$((i+1))
 	done
-	
+
 	git_string="\"$git_string\""
-	
+
 	if git commit -am "$git_string"; then
 		:
 	else
 		echo "Git is not installed properly"
 		return
 	fi
-	
-	git push	
+
+	git push
 }
 
 
@@ -170,10 +233,10 @@ oi()
 	if [ $# -lt 1 ]; then
 		return
 	fi
-	
+
 	git_string=""
 	i=0
-	
+
 	for var in "$@"
 	do
 		if [ $i -eq 0 ]; then
@@ -183,15 +246,15 @@ oi()
 		fi
 		i=$((i+1))
 	done
-	
+
 	git_string="\"$git_string\""
-	
+
 	if git commit -am "$git_string"; then
 		:
 	else
 		echo "Git is not installed properly"
 	fi
-	
+
 }
 aliasHere()
 {
@@ -199,14 +262,14 @@ aliasHere()
 		echo "You didn't enter the correct number of arguments"
 		return
 	fi
-	
-	
+
+
 	#	First get the current path
 	currPath=$(pwd)
 	currDate=$(date)
-	
+
 	filePath="$HOME/.custom_bash_aliases"
-	
+
 	if [ -f $filePath ]; then
 		echo "#		" >> $filePath
 		echo "#		New alias named $1 added on $currDate" >> $filePath
@@ -217,4 +280,25 @@ aliasHere()
 	else
 		echo "No file"
 	fi
+}
+
+openProjectFile()
+{
+	FILES=./*
+
+	for f in $FILES
+	do
+		if [[ $f == *.xcworkspace ]]; then
+			open $f
+			return
+		fi
+	done
+
+	for f in $FILES
+	do
+		if [[ $f == *.xcproject ]]; then
+			open $f
+			return
+		fi
+	done
 }
