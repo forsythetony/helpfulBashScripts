@@ -301,3 +301,38 @@ function parse_git_branch() {
 function git_update(){
   git checkout master && git pull && git checkout - && git rebase master
 }
+
+#
+#   Author:
+#       Anthony Forsythe
+#
+#   Creation Date:
+#       1/28/2019
+#
+#   Purpose:
+#       A quick little shortcut to list out the users that belong
+#       to a specific group
+#
+#   Arguments:
+#       $1:     The name of the group whose users you want to
+#               list out
+#
+#   Sample:
+#       listGroupUsers wheel
+#       
+#   Credit:
+#       The main command for this was provided by user 'ARG' here
+#       https://unix.stackexchange.com/a/241216
+#
+listGroupUsers() {
+
+    if [[ "$#" -ne 1 ]]; then
+        printf "
+    You must provide arguments in the form of...
+    \$1: Name of group
+"
+        return
+    fi
+
+    grep "^$1:" /etc/group
+}
