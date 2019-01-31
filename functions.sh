@@ -87,7 +87,7 @@ function openXcodeProject() {
 function cs() {
 
 	cd "$@"
-	ls -al
+	ll
 }
 
 function clearl() {
@@ -300,4 +300,131 @@ function parse_git_branch() {
 
 function git_update(){
   git checkout master && git pull && git checkout - && git rebase master
+}
+
+#   Author:
+#       Anthony Forsythe
+#
+#   Date Created:
+#       1/25/2019
+#
+#   Purpose:
+#       Will dummy file of size 500kb and type specified
+#
+#   Parameters:
+#       $1:	The folder the file will be created in
+#		$2:	The type of file that you wish to create (do not add the period)
+#		$3: (OPTIONAL) The size in kilobytes of the file you wish to create
+#
+#	Note:
+#		This utility does not _actually_ create the types of files you specify.
+#		It will just fill their contents with junk data. Attempting to open 
+#		the file will most likely result in the opening program saying
+#		the file is corrupt and cannot be opened.
+#
+#	Example:
+#		createDummyFile ~/sample_files/ txt
+#
+createDummyFile() {
+
+	if [[ "$#" -ne 2 ]]; then
+		printf "\nYou need to pass exactly two file arguments:
+	\$1:\tParent folder path
+	\$2:\tFile type to be created\n"
+		return
+	fi
+
+	if ! [[ -d $1 ]]; then
+		printf "\nThe path '$1' is not a directory!\n"
+		return
+	fi
+
+
+	if [ -n "$3" ]; then
+		printf "\nYou have provided the size. Setting accordingly...\n"
+		NUM_KILOBYTES=$3
+	else
+		printf "\nYou have not provided the size. Setting a default...\n"
+		NUM_KILOBYTES=500
+	fi
+
+	FILE_NAME="dummy_file.$2"
+
+	FULL_FILE_PATH="$1/$FILE_NAME"
+
+	dd if=/dev/zero of="$FULL_FILE_PATH" bs=1k  count=$NUM_KILOBYTES
+}
+
+#   Author:
+#       Anthony Forsythe
+#
+#   Date Created:
+#       1/25/2019
+#
+#   Purpose:
+#       Will create a set of dummy files of the types specified
+#
+#   Parameters:
+#       $1:		The folder the file will be created in
+#		$2...n:	The file types you wish to create
+#
+#	Example:
+#		createDummyFilesOfTypes ~/sample_files/ txt pdf mp4 
+#
+createDummyFilesOfTypes() {
+
+	if [[ "$#" -lt 2 ]]; then
+		printf "\nYou did not provide enough arguments.\nMust provide then following
+	\$1:	The location where you want the generated files to reside
+	\$2-n:	The names of the file types you wish to create\n"
+		return
+	fi
+
+	DUMMY_FILE_LOCATION=$1
+	if ! [ -n "$DUMMY_FILE_LOCATION" ]; then
+		echo "The first parameter mush be a valid file location"
+		echo "Quitting..."
+		return
+	fi
+
+	for fileType in "${@:2}"
+	do
+		createDummyFile $DUMMY_FILE_LOCATION $fileType
+	done
+}
+
+#   Author:
+#       Anthony Forsythe
+#
+#   Date Created:
+#       1/31/2019
+#
+#   Purpose:
+#       Will close an application that is blocking a port
+#
+#   Parameters:
+#       $1:		The port that you want to free up
+#
+#	Example:
+#		unblockPort 8080
+#
+unblockPort() {
+
+	if [[ $# -ne 1 ]]; then
+		printf "  Must provide the following argument:
+	\$1:	The port to be unblocked"
+		return
+	fi
+
+	PORT="$1"
+	GREP_COMMAND="grep 'tcp46.*$PORT'"
+	RUN_COMMAND="netstat -vanp tcp | ${GREP_COMMAND} | awk '{ print \$9 }' | sed 's/[^0-9]*//g'"
+
+	PROCESS_ID=$(eval $RUN_COMMAND)
+	
+	INFO_STRING="Killing process $PROCESS_ID blocking port $PORT"
+
+	echo $INFO_STRING
+
+	kill $PROCESS_ID
 }

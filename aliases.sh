@@ -30,3 +30,5 @@ alias clearcache="dscacheutil -flushcache"
 
 # clear all the things 😈
 alias clearall="qlcache && clearbash && clearcache && clear"
+
+alias yeet='git checkout -- .'
