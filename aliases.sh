@@ -32,3 +32,6 @@ alias clearcache="dscacheutil -flushcache"
 alias clearall="qlcache && clearbash && clearcache && clear"
 
 alias yeet='git checkout -- .'
+
+#   Go up a directory
+alias up='cs ..'
