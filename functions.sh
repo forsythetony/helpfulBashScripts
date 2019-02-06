@@ -3,9 +3,11 @@
 
 function bashreload() {
 	if [ -f ~/.bash_profile ]; then
+		echo "Found a .bash_profile to source!"
 		source ~/.bash_profile
 	else
 		if [ -f ~/.bashrc ]; then
+			echo "Found a .bashrc to source!"
 			source ~/.bashrc
 		fi
 	fi
@@ -20,6 +22,33 @@ function gitn() {
 	fi
 
 	git checkout -b "$@"
+}
+
+#
+#	Author:
+#		Anthony Forsythe
+#
+#	Creation Date:
+#		02-06-2019
+#
+#	Purpose:
+#		Will show the diff for a particular file when given an
+#		expression. The expression will be surrounded by wildcards.
+#
+#	Arguments:
+#		$1:	The search term (will be surrouned by wildcards)
+#
+#	Sample:
+#		gitd hello	
+#	
+function gitd() {
+
+	if [ $# -ne 1 ]; then
+		echo "You must provide a search term!"
+		return 1
+	fi
+	
+	git diff *$1*
 }
 
 function gitIgnoreEdit() {
