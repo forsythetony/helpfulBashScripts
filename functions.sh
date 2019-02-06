@@ -144,43 +144,6 @@ function mcd() {
 	fi
 }
 
-function up() {
-	cd ..
-	ll;
-}
-
-function gitp() {
-	if [ "$#" -eq 1 ]; then
-		if [ ! -f ~/git_repositories.json ]; then
-			echo "The repos file doesn't exist"
-			return
-		fi
-
-		if ! hash jq 2>/dev/null; then
-			echo "JQ does not exist "
-			return
-		fi
-
-		repoPathIndex="0"
-		jqFinderString=""
-
-		gitPath=( $( cat ~/git_repositories.json | jq ".[$1].path | @sh" | tr -d '"' | tr -d "'") )
-
-		echo $gitPath
-
-		cd $gitPath && git pull && cd -
-
-
-	else
-		if git pull; then
-			:
-		else
-			echo "Git was not properly installed"
-		fi
-	fi
-
-
-}
 
 function gits() {
 	if git status; then
@@ -248,29 +211,73 @@ function oi() {
 	fi
 
 }
+
+#
+#   Author:
+#       Anthony Forsythe
+#
+#   Creation Date:
+#       Unknown
+#
+#   Modification Date:
+#       02/06/2019
+#
+#   Purpose:
+#       Will create an alias with the provided name that will change
+#		into the directory your are currently in and list the contents
+#
+#	Notes:
+#		This function will create a file in your home directory called
+#		.custom_bash_aliases.sh the first time that it is run. A source
+#		command for this file will be added to your .bash_profile. All
+#		aliases created from this function will be stored there.
+#
+#   Arguments:
+#       $1:     The name you want to give to the alias
+#
+#   Sample:
+#       aliasHere scriptsFolder
+#       
 function aliasHere() {
-	if [ $# -lt 1 ]; then
+
+	if [ $# -ne 1 ]; then
 		echo "You didn't enter the correct number of arguments"
 		return
 	fi
 
+	#	Make sure that the file path for '.custom_bash_aliases'
+	#	exists. If it does not then make sure to go out and create
+	#	if and add it to your bash profile
+	CUSTOM_ALIASES_FILE_PATH="$HOME/.custom_bash_aliases.sh"
+	BASH_PROFILE_PATH="$HOME/.bash_profile"
 
-	#	First get the current path
-	currPath=$(pwd)
-	currDate=$(date)
+	if [ ! -f "$CUSTOM_ALIASES_FILE_PATH" ]; then
+		touch "$CUSTOM_ALIASES_FILE_PATH"
+		printf "\n\nif [ -f $CUSTOM_ALIASES_FILE_PATH ]; then" >> $BASH_PROFILE_PATH
+		printf "\tsource $CUSTOM_ALIASES_FILE_PATH" >> $BASH_PROFILE_PATH
+		printf "\nfi" >> $BASH_PROFILE_PATH
+	fi
 
-	filePath="$HOME/.custom_bash_aliases"
+	#	Let's get the current path as well as the current date so
+	#	that we can add it to our .custom_bash_aliases.sh file
+	#	with a little note
+	CURR_PATH=$(pwd)
+	CURR_DATE=$(date)
 
-	if [ -f $filePath ]; then
-		echo "#		" >> $filePath
-		echo "#		New alias named $1 added on $currDate" >> $filePath
-		echo "#		" >> $filePath
-		echo "alias $1='cs ${currPath// /\ }'" >> $filePath
-		echo " " >> $filePath
-		echo " " >> $filePath
+	#	Add the alias to the .custom_bash_aliases.sh file
+	if [ -f $CUSTOM_ALIASES_FILE_PATH ]; then
+		echo "#		" >> $CUSTOM_ALIASES_FILE_PATH
+		echo "#		New alias named $1 added on $CURR_DATE" >> $CUSTOM_ALIASES_FILE_PATH
+		echo "#		" >> $CUSTOM_ALIASES_FILE_PATH
+		echo "alias $1='cs ${CURR_PATH// /\ }'" >> $CUSTOM_ALIASES_FILE_PATH
+		echo " " >> $CUSTOM_ALIASES_FILE_PATH
+		echo " " >> $CUSTOM_ALIASES_FILE_PATH
 	else
 		echo "No file"
 	fi
+
+	#	Reload everything so that changes are reflected
+	bashreload
 }
 
 openProjectFile()
@@ -427,4 +434,39 @@ unblockPort() {
 	echo $INFO_STRING
 
 	kill $PROCESS_ID
+}
+
+#
+#   Author:
+#       Anthony Forsythe
+#
+#   Creation Date:
+#       1/28/2019
+#
+#   Purpose:
+#       A quick little shortcut to list out the users that belong
+#       to a specific group
+#
+#   Arguments:
+#       $1:     The name of the group whose users you want to
+#               list out
+#
+#   Sample:
+#       listGroupUsers wheel
+#       
+#   Credit:
+#       The main command for this was provided by user 'ARG' here
+#       https://unix.stackexchange.com/a/241216
+#
+listGroupUsers() {
+
+    if [[ "$#" -ne 1 ]]; then
+        printf "
+    You must provide arguments in the form of...
+    \$1: Name of group
+"
+        return
+    fi
+
+    grep "^$1:" /etc/group
 }
