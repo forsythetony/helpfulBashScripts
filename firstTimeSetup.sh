@@ -61,24 +61,18 @@ fi
 #   At this point we should have a .bash_profile that exists and is
 #   pointed to by the $DEFAULT_BASH_PROFILE_PATH var
 
-#   Let's add the 'aliases.sh' to the .bash_profile
-ALIASES_PATH="$PWD/aliases.sh"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+#   We will be sourcing by referencing the 'grouped.sh' script in this directory
+GROUPED_PATH="$SCRIPT_DIR/grouped.sh"
+
 CURR_DATE=$(date)
 
-printf "\n#\tAlias file linked on $CURR_DATE" >> $DEFAULT_BASH_PROFILE_PATH
-printf "\nif [ -f $ALIASES_PATH ]; then" >> $DEFAULT_BASH_PROFILE_PATH
-printf "\n\tsource $ALIASES_PATH" >> $DEFAULT_BASH_PROFILE_PATH
+printf "\n#\tHelper functions file linked on $CURR_DATE" >> $DEFAULT_BASH_PROFILE_PATH
+printf "\nif [ -f $GROUPED_PATH ]; then" >> $DEFAULT_BASH_PROFILE_PATH
+printf "\n\tsource $GROUPED_PATH" >> $DEFAULT_BASH_PROFILE_PATH
 printf "\nfi\n" >> $DEFAULT_BASH_PROFILE_PATH
 
-#   Let's add the 'functions.sh' to the .bash_profile
-FUNCTIONS_PATH="$PWD/functions.sh"
-
-printf "\n#\tFunctions file linked on $CURR_DATE" >> $DEFAULT_BASH_PROFILE_PATH
-printf "\nif [ -f $FUNCTIONS_PATH ]; then" >> $DEFAULT_BASH_PROFILE_PATH
-printf "\n\tsource $FUNCTIONS_PATH" >> $DEFAULT_BASH_PROFILE_PATH
-printf "\nfi\n" >> $DEFAULT_BASH_PROFILE_PATH
-
-source $ALIASES_PATH
-source $FUNCTIONS_PATH
+source $GROUPED_PATH
 
 bashreload
