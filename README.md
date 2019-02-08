@@ -1,5 +1,3 @@
-# About
-
 # Setup
 
 1. Run the `firstTimeSetup.sh` script.
