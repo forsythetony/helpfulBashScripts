@@ -158,8 +158,8 @@ foregroundColorFromRGB() {
 #   
 exportAllColors() {
 
-    COLOR_NORMAL=$(tput sgr0)
-    COLOR_BLUE=$(tput setaf $(fromHex 0000ff))
+    export COLOR_NORMAL=$(tput sgr0)
+    eCOLOR_BLUE=$(tput setaf $(fromHex 0000ff))
 }
 
 
