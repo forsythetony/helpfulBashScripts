@@ -81,10 +81,13 @@ printFullColorChart() {
 #		02-04-2018
 #
 #	Purpose:
-#		Will actually create the chart that is used. Without a header
+#		Will convert a given hex value to the nearest terminal supported
+#       color. Is usually used with the `tput setaf` command in the form
+#       `tput setaf $(fromHex ffffff)`
 #
 #	Sample:
-#		mode2colors 3
+#		fromHex 3
+#       BLUE_COLOR=$(tput setaf $(fromHex 0000FF))
 #
 #	Credit:
 #		This function was created by user Jeff Schaller on StackOverflow
