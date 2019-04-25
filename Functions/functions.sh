@@ -2,9 +2,9 @@
 
 
 function bashreload() {
-	if [ -f ~/.bash_profile ]; then
+	if [ -f ~/.zshrc ]; then
 		echo "Found a .bash_profile to source!"
-		source ~/.bash_profile
+		source ~/.zshrc
 	else
 		if [ -f ~/.bashrc ]; then
 			echo "Found a .bashrc to source!"
@@ -278,7 +278,7 @@ function aliasHere() {
 	#	exists. If it does not then make sure to go out and create
 	#	if and add it to your bash profile
 	CUSTOM_ALIASES_FILE_PATH="$HOME/.custom_bash_aliases.sh"
-	BASH_PROFILE_PATH="$HOME/.bash_profile"
+	BASH_PROFILE_PATH="$HOME/.zshrc"
 
 	if [ ! -f "$CUSTOM_ALIASES_FILE_PATH" ]; then
 		touch "$CUSTOM_ALIASES_FILE_PATH"
@@ -351,6 +351,7 @@ function git_update(){
 #       $1:	The folder the file will be created in
 #		$2:	The type of file that you wish to create (do not add the period)
 #		$3: (OPTIONAL) The size in kilobytes of the file you wish to create
+#		$4: (OPTIONAL) The name of the file
 #
 #	Note:
 #		This utility does not _actually_ create the types of files you specify.
@@ -363,7 +364,7 @@ function git_update(){
 #
 createDummyFile() {
 
-	if [[ "$#" -ne 2 ]]; then
+	if [[ "$#" -lt 2 ]]; then
 		printf "\nYou need to pass exactly two file arguments:
 	\$1:\tParent folder path
 	\$2:\tFile type to be created\n"
@@ -384,7 +385,16 @@ createDummyFile() {
 		NUM_KILOBYTES=500
 	fi
 
-	FILE_NAME="dummy_file.$2"
+	if [ -n "$4" ]; then
+		printf "\nYou have provided the file name. Setting accordingly...\n"
+		FILE_NAME=$4
+	else
+		printf "\nYou have not provided the size. Setting a default...\n"
+		FILE_NAME="dummy_file"
+	fi
+
+
+	FILE_NAME="$FILE_NAME.$2"
 
 	FULL_FILE_PATH="$1/$FILE_NAME"
 
@@ -429,11 +439,37 @@ createDummyFilesOfTypes() {
 	done
 }
 
+#
+#	Author:
+#		Anthony Forsythe
+#
+#	Creation Date:
+#		04-25-2019
+#
+#	Purpose:
+#		To find the process ID that is currently blocking a
+#		a port. Will echo the process ID blocking that port
+#
+#	Arguments:
+#		$1: 	The port whose blocking process ID you want to
+#				find
+#	Sample:
+#		findBlockingProcessID 8000		
+#
+findBlockingProcessID() {
+	if [[ $# -ne 1 ]]; then
+		echo ""
+		return
+	fi
+
+	netstat -vanp tcp | grep $1 | head -n 1 | awk '{ print $9 }'
+}
+
 #   Author:
 #       Anthony Forsythe
 #
 #   Date Created:
-#       1/31/2019
+#       01-31-2019
 #
 #   Purpose:
 #       Will close an application that is blocking a port
@@ -448,21 +484,19 @@ unblockPort() {
 
 	if [[ $# -ne 1 ]]; then
 		printf "  Must provide the following argument:
-	\$1:	The port to be unblocked"
+	\$1:	The port to be unblocked\n"
 		return
 	fi
 
-	PORT="$1"
-	GREP_COMMAND="grep 'tcp46.*$PORT'"
-	RUN_COMMAND="netstat -vanp tcp | ${GREP_COMMAND} | awk '{ print \$9 }' | sed 's/[^0-9]*//g'"
+	blockedPort=$(findBlockingProcessID $1)
 
-	PROCESS_ID=$(eval $RUN_COMMAND)
-	
-	INFO_STRING="Killing process $PROCESS_ID blocking port $PORT"
+	if [[ -z "$blockedPort" ]]; then
+		echo "Was unable to find a process blocking port $1"
+		return
+	fi
 
-	echo $INFO_STRING
-
-	kill $PROCESS_ID
+	echo "Killing the process with ID -> $blockedPort blocking port $1"
+	kill -9 $blockedPort
 }
 
 #
@@ -498,4 +532,121 @@ listGroupUsers() {
     fi
 
     grep "^$1:" /etc/group
+}
+
+
+gradleRunDir() {
+
+	if [[ "$#" -ne 1 ]]; then
+        printf "
+    You must provide arguments in the form of...
+    \$1: Gradle directory to run
+"
+        return
+    fi
+
+	./gradlew -p "$1" clean build
+}
+
+gitAddOleUpstream() {
+
+	currentRemotes=$(git remote -v)
+
+	currentRemotes=$( $currentRemotes )
+
+	echo "Array count is ${currentRemotes[1]}"
+	
+	for i in "${currentRemotes[@]}"
+	do
+		echo "$i"
+	done
+}
+
+
+#
+#	Author:
+#		Anthony Forsythe
+#
+#	Creation Date:
+#		02-21-2019
+#
+#	Purpose:
+#		To add a remote upstream to the file
+#
+#	Arguments:
+#       $1: This is the URL of the upstream to be added. Do
+#           not surround with quotes.
+#	Sample:
+#		gitur git@git.target.com:ole/inventory.git
+#
+function gitur() {
+
+    if [ "$#" -ne 1 ]; then
+        echo "You failed to provide enough arguments"
+        return
+    fi
+
+    git remote add upstream "$@"
+}
+
+#
+#	Author:
+#		Anthony Forsythe
+#
+#	Creation Date:
+#		04-25-2019
+#
+#	Purpose:
+#		To throw away all code that is currently being worked on in a git repository.
+#
+#	Sample:
+#		yeetCode
+#
+function yeetCode() {
+
+	printf "                                                                                                                                 
+                            ',,,,,,,,,,     ',,,,,,,,,. ,,,,,,,,,,,,,,,,,,.   ,,,,,,,,,,,,,,,,,,..,,,,,,,,,,,,,,,,,,,,,,,.                            
+                            '@########W     +#########i n#################*   x#################ii#######################*                            
+                             z#########.    n#########. n#################*   x#################ii#######################*                            
+                             i#########;    W########x  n#################*   x#################ii#######################*                            
+                             '#########+   .#########*  n#################*   x#################ii#######################*                            
+                              x########n   ;#########,  n#################*   x#################ii#######################*                            
+                              *########M   #########M   n#################*   x#################ii#######################*                            
+                              ,########@'  x########+   n#################*   x#################ii#######################*                            
+                               M########: '@########,   n##########xxxxxxx;   x##########xxxxxxx;;xxxxxx###########xxxxxx;                            
+                               #########i ,########W    n##########:          x##########,              @#########@'                                  
+                               :######### i#########    n##########,          x##########,              @#########@                                   
+                               'W#######x #########:    n##########,          x##########,              @#########@                                   
+                                z#######W x#######@'    n##########,          x##########,              @#########@                                   
+                                ;########.@#######z     n##########,          x##########,              @#########@                                   
+                                '@#######;########;     n##########,          x##########,              @#########@                                   
+                                 x#######z#######@'     n##########,          x##########,              @#########@                                   
+                                 *#######@#######n      n##########nzzzzzz'   x##########nzzzzzz        @#########@                                   
+                                 .###############i      n################@'   x################@        @#########@                                   
+                                  M#############@.      n################@'   x################@        @#########@                                   
+                                  +#############x       n################@'   x################@        @#########@                                   
+                                  :#############*       n################@'   x################@        @#########@                                   
+                                  'W############.       n################@'   x################@        @#########@                                   
+                                   z###########M        n################@'   x################@        @#########@                                   
+                                   ;###########+        n##########@@@@@@W'   x##########@@@@@@W        @#########@                                   
+                                   '@##########,        n##########:''''''    x##########,''''''        @#########@                                   
+                                    n#########W         n##########,          x##########,              @#########@                                   
+                                    +#########z         n##########,          x##########,              @#########@                                   
+                                    +#########z         n##########,          x##########,              @#########@                                   
+                                    +#########z         n##########,          x##########,              @#########@                                   
+                                    +#########z         n##########,          x##########,              @#########@                                   
+                                    +#########z         n##########,          x##########,              @#########@                                   
+                                    +#########z         n##########,          x##########,              @#########@                                   
+                                    +#########z         n##########i:::::::'  x##########;:::::::'      @#########@                                   
+                                    +#########z         n##################,  x##################,      @#########@                                   
+                                    +#########z         n##################,  x##################,      @#########@                                   
+                                    +#########z         n##################,  x##################,      @#########@                                   
+                                    +#########z         n##################,  x##################,      @#########@                                   
+                                    +#########z         n##################,  x##################,      @#########@                                   
+                                    +#########z         n##################,  x##################,      @#########@                                   
+                                    +#########z         n##################,  x##################,      @#########@                                   
+                                    innnnnnnnn*         +nnnnnnnnnnnnnnnnnn,  +nnnnnnnnnnnnnnnnnn.      znnnnnnnnnn                                   
+	\n"
+
+	git checkout -- .
 }

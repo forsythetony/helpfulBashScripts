@@ -35,3 +35,12 @@ alias yeet='git checkout -- .'
 
 #   Go up a directory
 alias up='cs ..'
+
+#   Update the current branch from the upstream master branch
+alias gitupdate='git fetch --all && git rebase upstream/master'
+
+#   Docker compose up
+alias dup='docker-compose up -d'
+
+#   Docker compose down
+alias ddown='docker-compose down'
