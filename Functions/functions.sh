@@ -173,6 +173,13 @@ function mcd() {
 	fi
 }
 
+function addMod {
+    git add $(git status | rg modified | cut -d$' ' -f 4 | fzf)
+}
+
+function addModBoth {
+    git add $(git status | rg both | cut -d$' ' -f 5 | fzf)
+}
 
 function gits() {
 	if git status; then
