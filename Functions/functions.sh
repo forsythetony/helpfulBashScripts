@@ -172,17 +172,73 @@ function mcd() {
 		echo "Could not create directory"
 	fi
 }
+function addFavorite() {
+
+	FAVORITE_NAME=`basename $PWD`
+
+	if [ "$#" -ge 1 ]; then
+    	FAVORITE_NAME="$1"
+	fi
+
+	echo "Creating a favorite with name $FAVORITE_NAME -> $PWD"
+	
+	FAVROITE_ROOT_PATH="/Users/z003bzg/Documents/favorite_locations/"
+
+	SYM_LINK_PATH="$FAVROITE_ROOT_PATH$FAVORITE_NAME"
+
+	ln -s $PWD $SYM_LINK_PATH
+}
+
+function getModFiles() {
+	git status | rg modified | cut -d$' ' -f 4
+}
+
+function getModBothFiles() {
+	git status | rg both | cut -d$' ' -f 5
+}
+
+function getNewFiles() {
+	git status | rg new | cut -d$' ' -f 5
+}
 
 function addMod {
-    git add $(git status | rg modified | cut -d$' ' -f 4 | fzf)
+
+	FILE_NAME=`getModFiles | fzf`
+
+	if [[ -z "$FILE_NAME" ]]; then
+		echo "No file found. Exiting."
+		return 1
+	fi
+
+    git add "$FILE_NAME"
+}
+
+function checkoutMod {
+
+	FILE_NAME=`getModFiles | fzf`
+
+	if [[ -z "$FILE_NAME" ]]; then
+		echo "No file found. Exiting."
+		return 1
+	fi
+
+    git checkout -- "$FILE_NAME"
 }
 
 function addModBoth {
-    git add $(git status | rg both | cut -d$' ' -f 5 | fzf)
+    git add `getModBothFiles | fzf`
 }
 
 function diffMod {
-	git add $(git status | rg modified | cut -d$' ' -f 4 | fzf)
+
+	FILE_NAME=`getModFiles | fzf`
+
+	if [[ -z "$FILE_NAME" ]]; then
+		echo "No file found. Exiting."
+		return 1
+	fi
+
+    git diff "$FILE_NAME"
 }
 
 function gits() {
@@ -660,4 +716,37 @@ function yeetCode() {
 	\n"
 
 	git checkout -- .
+}
+
+#	Custom Jump Commands
+jump() {
+
+    JUMP_PATH=`ls -d $1/* | fzf`
+
+    if [[ -z "$JUMP_PATH" ]]; then
+		echo "No jump path found. Exiting."
+		return 1
+	fi
+
+    cs "$JUMP_PATH"
+}
+
+oleJump🍊() {
+    
+	if [[ -z "$OLE_REPOS_DIRECTORY" ]]; then
+			echo "The OLE_REPOS_DIRECTORY variable is not set!"
+			echo "Exiting"
+	fi
+	
+	jump "$OLE_REPOS_DIRECTORY"
+}
+
+favoritesJump() {
+
+	if [[ -z "$FAVORITES_DIRECTORY" ]]; then
+			echo "The FAVORITE_DIRECTORIES_LOCATION variable is not set!"
+			echo "Exiting"
+	fi
+
+    jump "$FAVORITES_DIRECTORY"
 }
