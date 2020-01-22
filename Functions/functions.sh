@@ -174,6 +174,13 @@ function mcd() {
 }
 function addFavorite() {
 
+	if [[ -z "$FAVORITES_DIR" ]]; then
+		echo "The FAVORITES_DIR variable is not set in the shell"
+		echo "Exiting"
+		return 1
+	fi
+	
+	
 	FAVORITE_NAME=`basename $PWD`
 
 	if [ "$#" -ge 1 ]; then
@@ -182,7 +189,7 @@ function addFavorite() {
 
 	echo "Creating a favorite with name $FAVORITE_NAME -> $PWD"
 	
-	FAVROITE_ROOT_PATH="/Users/z003bzg/Documents/favorite_locations/"
+	FAVROITE_ROOT_PATH="$FAVORITES_DIR/"
 
 	SYM_LINK_PATH="$FAVROITE_ROOT_PATH$FAVORITE_NAME"
 
@@ -736,6 +743,7 @@ oleJump🍊() {
 	if [[ -z "$OLE_REPOS_DIRECTORY" ]]; then
 			echo "The OLE_REPOS_DIRECTORY variable is not set!"
 			echo "Exiting"
+			return 1
 	fi
 	
 	jump "$OLE_REPOS_DIRECTORY"
@@ -743,10 +751,11 @@ oleJump🍊() {
 
 favoritesJump() {
 
-	if [[ -z "$FAVORITES_DIRECTORY" ]]; then
+	if [[ -z "$FAVORITES_DIR" ]]; then
 			echo "The FAVORITE_DIRECTORIES_LOCATION variable is not set!"
 			echo "Exiting"
+			return 1
 	fi
 
-    jump "$FAVORITES_DIRECTORY"
+    jump "$FAVORITES_DIR"
 }
