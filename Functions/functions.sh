@@ -759,3 +759,53 @@ favoritesJump() {
 
     jump "$FAVORITES_DIR"
 }
+
+#
+#	Author:
+#		Anthony Forsythe
+#
+#	Date Created:
+#		02-25-2020
+#
+#	Purpose:
+#		Displays a selectable list of spec files to run using
+#		`yarn test <SPEC FILE>`
+#
+#	Parameters:
+#		$1 (Optional):
+#			Pass anything (not including spaces) here to run all
+#			tests
+#
+#	Example:
+#		yarnTest
+#		yarnTest literallyAnthing
+#
+yarnTest() {
+	#	If the user passes in a single argument then
+	#	run all tests
+	if [[ "$#" -eq 1 ]]; then
+		echo "You've entered the secret number of arguments!"
+		echo "Will run all tests!"
+		yarn test
+		return 0
+	fi
+
+	TEST_TO_RUN=`fd -e spec.ts | fzf`
+
+	if [[ -z "$TEST_TO_RUN" ]]; then
+		echo "No spec file selected"
+		echo "Quitting..."
+		return 1
+	fi
+
+	yarn test $TEST_TO_RUN
+
+	BASE_SHELL=`basename $SHELL`
+
+	if [[ "$BASE_SHELL" -eq "zsh" ]]; then
+		echo "Entering this command in your history for quick access"
+		echo "Command -> yarn test $TEST_TO_RUN"
+		print -s yarn test $TEST_TO_RUN
+		return 0
+	fi
+}
