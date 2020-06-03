@@ -197,7 +197,11 @@ function addFavorite() {
 }
 
 function getModFiles() {
-	git status | rg modified | cut -d$' ' -f 4
+	if [[ "$#" -eq 1 ]]; then
+		git status | rg modified | rg "$1" | cut -d$' ' -f 4
+	else
+		git status | rg modified | cut -d$' ' -f 4
+	fi
 }
 
 function getModBothFiles() {
@@ -238,7 +242,11 @@ function addModBoth {
 
 function diffMod {
 
-	FILE_NAME=`getModFiles | fzf`
+	if [[ "$#" -eq 1 ]]; then
+		FILE_NAME=`getModFiles $1 | fzf`
+	else
+		FILE_NAME=`getModFiles | fzf`
+	fi
 
 	if [[ -z "$FILE_NAME" ]]; then
 		echo "No file found. Exiting."
@@ -246,6 +254,8 @@ function diffMod {
 	fi
 
     git diff "$FILE_NAME"
+
+	echo "$FILE_NAME" | tr '\n' ' ' | pbcopy
 }
 
 function gits() {
@@ -751,13 +761,13 @@ oleJump🍊() {
 
 favoritesJump() {
 
-	if [[ -z "$FAVORITES_DIR" ]]; then
+	if [[ -z "$FAVORITE_DIRECTORIES_LOCATION" ]]; then
 			echo "The FAVORITE_DIRECTORIES_LOCATION variable is not set!"
 			echo "Exiting"
 			return 1
 	fi
 
-    jump "$FAVORITES_DIR"
+    jump "$FAVORITE_DIRECTORIES_LOCATION"
 }
 
 #
