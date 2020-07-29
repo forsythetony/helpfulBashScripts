@@ -1,6 +1,14 @@
+
+# Because of some issues we have to unalias some aliases that we've removed
+unalias gitupdate
+
 # Add Custom aliases here
 
 # export PS1="\n\[\033[38;5;247m\]\w\[\033[34m\]\$(parse_git_branch)\n🍉  \[\033[0m\]"
+
+# Git stuff
+alias yeet='git checkout -- .'
+alias gitm='git checkout main'
 
 # list all, including dot files
 alias ll='ls -alG'
@@ -31,13 +39,8 @@ alias clearcache="dscacheutil -flushcache"
 # clear all the things 😈
 alias clearall="qlcache && clearbash && clearcache && clear"
 
-alias yeet='git checkout -- .'
-
 #   Go up a directory
 alias up='cs ..'
-
-#   Update the current branch from the upstream master branch
-alias gitupdate='git fetch upstream && git rebase upstream/master'
 
 #   Docker compose up
 alias dup='docker-compose up -d'

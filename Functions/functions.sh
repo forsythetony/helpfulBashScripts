@@ -1,6 +1,41 @@
 #/bin/bash
 
+function rEcho() {
 
+	if [[ "$#" < 1 ]]; then
+		return 1
+	fi
+
+	echo "🤖: $@"
+}
+
+function gitupdate() {
+
+	#	First let's make sure we're on the 'main' branch
+	CURRENT_BRANCH=`git rev-parse --abbrev-ref HEAD`
+	
+	if [[ "$#" == 1 ]]; then
+		
+		if [[ "$1" == "master" ]]; then
+			rEcho "I see you're overriding things. Will integrate master into this branch."
+			git fetch upstream && git rebase upstream/master
+			return 0
+		fi
+		
+		rEcho "You've given me something I don't know how to handle. Exiting..."
+		return 2
+	fi
+
+	if [[ "$CURRENT_BRANCH" != "main" ]]; then
+		rEcho "You're not on the main branch!"
+		rEcho "Going to quit before I mess something up..."
+		return 1
+	fi
+
+	rEcho "Beep Boop Bop ... Integrating upstream changes into main"
+	
+	git fetch upstream && git rebase upstream/main
+}
 function bashreload() {
 	if [ -f ~/.zshrc ]; then
 		echo "Found a .bash_profile to source!"
@@ -175,8 +210,8 @@ function mcd() {
 function addFavorite() {
 
 	if [[ -z "$FAVORITES_DIR" ]]; then
-		echo "The FAVORITES_DIR variable is not set in the shell"
-		echo "Exiting"
+		rEcho "The FAVORITES_DIR variable is not set in the shell"
+		rEcho "Exiting"
 		return 1
 	fi
 	
@@ -187,7 +222,7 @@ function addFavorite() {
     	FAVORITE_NAME="$1"
 	fi
 
-	echo "Creating a favorite with name $FAVORITE_NAME -> $PWD"
+	rEcho "Creating a favorite with name $FAVORITE_NAME -> $PWD"
 	
 	FAVROITE_ROOT_PATH="$FAVORITES_DIR/"
 
@@ -618,18 +653,37 @@ listGroupUsers() {
     grep "^$1:" /etc/group
 }
 
+chooseDirectory() {
+	ls -d */ | fzf
+}
 
 gradleRunDir() {
 
 	if [[ "$#" -ne 1 ]]; then
-        printf "
-    You must provide arguments in the form of...
-    \$1: Gradle directory to run
-"
+		
+		CHOSEN_DIRECTORY=`chooseDirectory`
+		COMMAND_TO_EXEC="./gradlew -p $CHOSEN_DIRECTORY clean build"
+
+		eval $COMMAND_TO_EXEC
+		
+		#	Let's add this command to the history so we can do a quick ↑ to
+		#	get back to it
+		print -s $COMMAND_TO_EXEC
+		
         return
     fi
 
 	./gradlew -p "$1" clean build
+}
+
+gradleTestDir() {
+
+	if [[ "$#" -ne 1 ]]; then
+        ./gradlew -p `ls -d */ | fzf` clean test
+        return
+    fi
+
+	./gradlew -p "$1" clean test
 }
 
 gitAddOleUpstream() {
