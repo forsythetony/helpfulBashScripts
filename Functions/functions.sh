@@ -790,7 +790,34 @@ function yeetCode() {
 }
 
 #	Custom Jump Commands
+#
+#	Author:
+#		Anthony Forsythe
+#
+#	Creation Date:
+#		08-07-2020
+#
+#	Purpose:
+#		Leverages `fzf` to help the user select a folder in the path provided to quickly jump to
+#
+#	Arguments:
+#		1:	The directory container that directories that you want to list and jump into
+#		2:	(optional) If this argument is `true` then the items in the list will only be
+#			their basenames
+#
+#	Sample:
+#		jump ~/favorite_folders
+#		jump ~/favorite_folders true
+#
 jump() {
+
+	if [[ "$#" = 2 && "$2" = true ]]; then
+		JUMP_PATH_BASENAME=`ls -d $1/* | xargs basename | fzf`
+
+		cs "$1/$JUMP_PATH_BASENAME"
+
+		return
+	fi
 
     JUMP_PATH=`ls -d $1/* | fzf`
 
@@ -810,7 +837,7 @@ oleJump🍊() {
 			return 1
 	fi
 	
-	jump "$OLE_REPOS_DIRECTORY"
+	jump "$OLE_REPOS_DIRECTORY" true
 }
 
 favoritesJump() {
