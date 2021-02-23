@@ -207,6 +207,29 @@ function mcd() {
 		echo "Could not create directory"
 	fi
 }
+
+#
+#	Author:
+#		Anthony Forsythe (https://github.com/forsythetony)
+#
+#	Date Created:
+#		02-28-2020
+#
+#	Purpose:
+#		Will add a symbolic link to the directly you are currently in, essentially 
+#		bookmarking it. Incredibly useful when paired with the `favoritesJump` 
+#		command to quickly jump between "bookmarked" directories.
+#
+#	Note:
+#		You must export the `FAVORITES_DIR` environment variable in your 
+#		`.bash_profile`. It can just be an (initially) empty command.
+#
+#	Parameters:
+#		$1 (optional):	The name for the symbolic link
+#
+#	Example:
+#		addFavorite iosProjectFiles
+#
 function addFavorite() {
 
 	if [[ -z "$FAVORITES_DIR" ]]; then
@@ -231,12 +254,64 @@ function addFavorite() {
 	ln -s $PWD $SYM_LINK_PATH
 }
 
+function removeFavorite() {
+
+	red=$'\e[1;31m'
+	NC='\033[0m' # No Color
+
+	if [[ -z "$FAVORITES_DIR" ]]; then
+		echo "🤖: The FAVORITES_DIR variable is not set in the shell"
+		echo "🤖: Exiting"
+		return 1
+	fi
+	
+	
+	SELECTED_FAVORITE=`ls -d $FAVORITES_DIR/* | fzf`
+
+	FAVORITE_BASENAME=`basename $SELECTED_FAVORITE`
+	echo "🤖: Are you sure you want to delete -> $red$FAVORITE_BASENAME$NC ... (yes/no)"
+	read DELETION_CONFIRMATION
+
+	DELETION_CONFIRMATION=`echo "$DELETION_CONFIRMATION" | tr '[:upper:]' '[:lower:]'`
+
+	if [[ "$DELETION_CONFIRMATION" == "y" ]] || [[ "$DELETION_CONFIRMATION" == "yes" ]]; then
+		echo "🤖: Deleting favorite $FAVORITE_BASENAME"
+		rm $SELECTED_FAVORITE
+		return 0
+	elif [[ "$DELETION_CONFIRMATION" == "n" ]] || [[ "$DELETION_CONFIRMATION" == "no" ]]; then
+		echo "🤖: Will not delete $FAVORITE_BASENAME"
+		return 0;
+	else
+		echo "🤖: I *ptthhhh* cant *ptthhhh* understand *pttthhhhh* your *pthhhhh* accent"
+	fi
+}
+
+#
+#	Author:
+#		Anthony Forsythe
+#
+#	Date Created:
+#		02-28-2020
+#
+#	Purpose:
+#		Will retrieve a list of all modified files according to
+#		git
+#
+#	Parameters:
+#
+#	Example:
+#		getModFiles
+#
 function getModFiles() {
 	if [[ "$#" -eq 1 ]]; then
 		git status | rg modified | rg "$1" | cut -d$' ' -f 4
 	else
 		git status | rg modified | cut -d$' ' -f 4
 	fi
+}
+
+function fuzzyModFiles() {
+	getModFiles | fzf
 }
 
 function getModBothFiles() {
@@ -848,7 +923,7 @@ favoritesJump() {
 			return 1
 	fi
 
-    jump "$FAVORITE_DIRECTORIES_LOCATION"
+    jump "$FAVORITE_DIRECTORIES_LOCATION" $1
 }
 
 #
@@ -875,13 +950,18 @@ yarnTest() {
 	#	If the user passes in a single argument then
 	#	run all tests
 	if [[ "$#" -eq 1 ]]; then
-		echo "You've entered the secret number of arguments!"
-		echo "Will run all tests!"
-		yarn test
-		return 0
-	fi
+		
+		if [[ "$1" == "all" ]]; then
+			echo "Will run all tests!"
+			yarn test
+			return 0
+		fi
 
-	TEST_TO_RUN=`fd -e spec.ts | fzf`
+		TEST_TO_RUN=`fd $1 -espec.ts -espec.tsx | fzf`
+		
+	else
+		TEST_TO_RUN=`fd -espec.ts -espec.tsx | fzf`
+	fi
 
 	if [[ -z "$TEST_TO_RUN" ]]; then
 		echo "No spec file selected"
@@ -893,7 +973,7 @@ yarnTest() {
 
 	BASE_SHELL=`basename $SHELL`
 
-	if [[ "$BASE_SHELL" -eq "zsh" ]]; then
+	if [[ "$BASE_SHELL" == "zsh" ]]; then
 		echo "Entering this command in your history for quick access"
 		echo "Command -> yarn test $TEST_TO_RUN"
 		print -s yarn test $TEST_TO_RUN
