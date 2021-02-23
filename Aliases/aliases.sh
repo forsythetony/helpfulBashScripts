@@ -1,6 +1,6 @@
 
 # Because of some issues we have to unalias some aliases that we've removed
-unalias gitupdate
+unalias gitupdate &>/dev/null
 
 # Add Custom aliases here
 
