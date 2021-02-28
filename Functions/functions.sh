@@ -923,7 +923,7 @@ favoritesJump() {
 			return 1
 	fi
 
-    jump "$FAVORITE_DIRECTORIES_LOCATION" $1
+    jump "$FAVORITE_DIRECTORIES_LOCATION" $1 true
 }
 
 #
