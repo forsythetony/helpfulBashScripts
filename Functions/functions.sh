@@ -924,6 +924,45 @@ favoritesJump() {
 	fi
 
     jump "$FAVORITES_DIR" $1 true
+		echo "The FAVORITE_DIRECTORIES_LOCATION variable is not set!"
+		echo "Exiting"
+		return 1
+	fi
+
+	jump "$FAVORITES_DIR" true
+}
+
+#
+#	Author:
+#		Anthony Forsythe
+#
+#	Date Created:
+#		04-02-2022
+#
+#	Purpose:
+#	    Searches through command history using fzf and executes selction. Selection
+#	    is then placed in the history for easy access with the up arrow key.
+#
+#	Example:
+#	   historySearchAndRun 
+#
+historySearchAndRun() {
+
+    #   First step is to find the command we want to run
+    #   again
+    COMMAND=$(history -n | fzf)
+
+    echo "The command you want me to run -> ${COMMAND}"
+
+    if [[ -z "$COMMAND" ]]; then
+        echo "You did not select a command to re-run...exiting..."
+        return
+    fi
+
+    #   Store the command in the history so we can do a quick
+    #   ⬆ on the keyboard
+    print -s $COMMAND
+    eval $COMMAND
 }
 
 #
