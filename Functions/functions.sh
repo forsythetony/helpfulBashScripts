@@ -918,12 +918,6 @@ oleJump🍊() {
 favoritesJump() {
 
 	if [[ -z "$FAVORITES_DIR" ]]; then
-			echo "The FAVORITE_DIRECTORIES_LOCATION variable is not set!"
-			echo "Exiting"
-			return 1
-	fi
-
-    jump "$FAVORITES_DIR" $1 true
 		echo "The FAVORITE_DIRECTORIES_LOCATION variable is not set!"
 		echo "Exiting"
 		return 1
