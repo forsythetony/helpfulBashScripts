@@ -936,27 +936,51 @@ favoritesJump() {
 #	Purpose:
 #	    Searches through command history using fzf and executes selction. Selection
 #	    is then placed in the history for easy access with the up arrow key.
+#     
+#     Passing the '-c' flag will not execute selected command but will instead place
+#     place it in the clipboard
 #
 #	Example:
 #	   historySearchAndRun 
 #
 historySearchAndRun() {
 
-    #   First step is to find the command we want to run
-    #   again
-    COMMAND=$(history -n | fzf)
+  #   If the user passes the '-c' flag to the command then this flag will be set to
+  #   true. The command will not be run but instead copied to the clipboard.
+  COPY_COMMAND=false
 
-    echo "The command you want me to run -> ${COMMAND}"
-
-    if [[ -z "$COMMAND" ]]; then
-        echo "You did not select a command to re-run...exiting..."
-        return
+  if [[ "$#" -eq 1 ]]; then
+  
+    if [[ "$1" == "-c" ]]; then
+      COPY_COMMAND=true
+    else
+      echo "Option not recognized!"
+      echo "Valid options ( -c )"
+      echo "Exiting..."
+      return
     fi
+  fi
 
+  #   First step is to find the command we want to run
+  #   again
+  COMMAND=$(history -n | fzf)
+
+  if [[ -z "$COMMAND" ]]; then
+    echo "You did not select a command to re-run...exiting..."
+    return
+  fi
+
+  echo "The command you want me to run -> ${COMMAND}"
+
+  if $COPY_COMMAND; then
+    echo "Copying command to clipboard"
+    echo -n "$COMMAND" | pbcopy
+  else
     #   Store the command in the history so we can do a quick
     #   ⬆ on the keyboard
     print -s $COMMAND
     eval $COMMAND
+  fi 
 }
 
 #
